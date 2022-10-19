@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">Weather Application</string>
+    <string name="weather_api_key">9942e10d9a3f464c93052323220910</string>
+    <string name="error_io_exception">Please make sure your internet connection is stable</string>
+    <string name="error_server_exception">Could not get data from server</string>
+    <string name="degree_sign">%1$d\u00B0</string>
+    <string name="celsius_degree">%1$d\u2103</string>
+    <string name="fahrenheit_degree">%1$d\u2109</string>
+    <string name="speed_km">%1$dkm/h</string>
+    <string name="speed_mi">%1$dmi/h</string>
+    <string name="humidity">%1$d%%</string>
+    <string name="pressure">%1$dpa</string>
+    <string name="today">Today</string>
+    <string name="forecast">Forecast</string>
+    <string name="min_max_feels_like">%1$d\u00B0/%2$d\u00B0 Feels like %3$d\u00B0</string>
+    <string name="min_max">%1$d\u00B0/%2$d\u00B0</string>
+    <string name="showing_date">%1$s, %2$s %3$s</string>
+    <string name="pm">%1$d pm</string>
+    <string name="am">%1$d am</string>
+    <string name="field_search_hint">Enter city, country, etc</string>
+    <string name="try_again">Try Again</string>
+    <string name="search_for_city">Search for city</string>
+    <string name="nothing_found">No result found for the search.</string>
+    <string name="user_permission_granted">Location permission granted successfully</string>
+    <string name="user_permission_denied">%1$s permission has been denied</string>
+    <string name="notification_title">%1$s, %2$d\u00B0</string>
+
+    <string name="content_desc_current_weather">Current weather condition</string>
+    <string name="content_desc_hourly_weather">Hourly weather condition</string>
+    <string name="content_desc_forecast_weather">Forecast weather condition</string>
+    <string name="content_desc_empty_state_photo">empty state photo</string>
+    <string name="content_desc_back_to_map">back to map</string>
+    <string name="content_desc_show_my_location">show my location</string>
+</resources>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav"
+    app:startDestination="@id/weatherTodayFragment">
+
+    <fragment
+        android:id="@+id/searchLocationFragment"
+        android:name="com.example.weatherapplication.feature.search.SearchLocationFragment"
+        android:label="fragment_search_location"
+        tools:layout="@layout/fragment_search_location" />
+    <fragment
+        android:id="@+id/weatherTodayFragment"
+        android:name="com.example.weatherapplication.feature.today.WeatherTodayFragment"
+        android:label="fragment_weather_today"
+        tools:layout="@layout/fragment_weather_today" >
+        <action
+            android:id="@+id/action_weatherTodayFragment_to_searchLocationFragment"
+            app:destination="@id/searchLocationFragment" />
+    </fragment>
+</navigation>

@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/DefFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".feature.today.WeatherTodayFragment">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dataCl"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/currentLocationTv"
+                    style="@style/DefTxtStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_large"
+                    android:textSize="@dimen/text_size_h2"
+                    android:textStyle="bold"
+                    app:drawableStartCompat="@drawable/ic_baseline_location_on_24"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Current location goes here" />
+
+                <TextView
+                    android:id="@+id/currentTimeTv"
+                    style="@style/DefTxtStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin"
+                    android:textSize="@dimen/text_size_h4"
+                    app:layout_constraintEnd_toEndOf="@+id/currentLocationTv"
+                    app:layout_constraintStart_toStartOf="@+id/currentLocationTv"
+                    app:layout_constraintTop_toBottomOf="@+id/currentLocationTv"
+                    tools:text="Time goes here" />
+
+                <TextView
+                    android:id="@+id/currentTempTv"
+                    style="@style/DefTxtStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_large_x"
+                    android:layout_marginTop="@dimen/margin"
+                    android:textSize="@dimen/text_size_xxx"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/currentTimeTv"
+                    tools:text="22" />
+
+                <TextView
+                    android:id="@+id/currentConditionTv"
+                    style="@style/DefTxtStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_h4"
+                    app:layout_constraintStart_toStartOf="@+id/currentTempTv"
+                    app:layout_constraintTop_toBottomOf="@+id/currentTempTv"
+                    tools:text="Mostly Clear" />
+
+                <TextView
+                    android:id="@+id/minMaxFeelTempTv"
+                    style="@style/DefTxtStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_h5"
+                    app:layout_constraintStart_toStartOf="@+id/currentTempTv"
+                    app:layout_constraintTop_toBottomOf="@+id/currentConditionTv"
+                    tools:text="26\u00B0/18\u00B0 Feels like 24\u00B0" />
+
+                <ImageView
+                    android:id="@+id/currentConditionIv"
+                    android:layout_width="@dimen/square_large_x"
+                    android:layout_height="@dimen/square_large_x"
+                    android:layout_marginEnd="@dimen/margin_large_x"
+                    android:contentDescription="@string/content_desc_current_weather"
+                    app:layout_constraintBottom_toBottomOf="@+id/minMaxFeelTempTv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/currentTimeTv"
+                    tools:src="@tools:sample/avatars" />
+
+                <TextView
+                    android:id="@+id/windSpeedTv"
+                    style="@style/DefTxtStyle"
+                    android:layout_width="@dimen/square_large"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_large_x"
+                    android:gravity="start"
+                    app:layout_constraintEnd_toStartOf="@+id/humidityTv"
+                    app:layout_constraintHorizontal_chainStyle="spread_inside"
+                    app:layout_constraintStart_toStartOf="@+id/currentTempTv"
+                    app:layout_constraintTop_toBottomOf="@+id/minMaxFeelTempTv"
+                    tools:text="12.3km/h" />
+
+                <TextView
+                    android:id="@+id/humidityTv"
+                    style="@style/DefTxtStyle"
+                    android:layout_width="@dimen/square_large"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    app:layout_constraintBottom_toBottomOf="@+id/windSpeedTv"
+                    app:layout_constraintEnd_toStartOf="@+id/pressureTv"
+                    app:layout_constraintStart_toEndOf="@+id/windSpeedTv"
+                    app:layout_constraintTop_toTopOf="@+id/windSpeedTv"
+                    tools:text="27%" />
+
+                <TextView
+                    android:id="@+id/pressureTv"
+                    style="@style/DefTxtStyle"
+                    android:layout_width="@dimen/square_large"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    app:layout_constraintBottom_toBottomOf="@+id/humidityTv"
+                    app:layout_constraintEnd_toEndOf="@id/currentConditionIv"
+                    app:layout_constraintStart_toEndOf="@+id/humidityTv"
+                    app:layout_constraintTop_toTopOf="@+id/humidityTv"
+                    tools:text="40pa" />
+
+                <TextView
+                    android:id="@+id/todayTv"
+                    style="@style/DefTxtStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin"
+                    android:text="@string/today"
+                    android:textSize="@dimen/text_size_h1"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@+id/currentTempTv"
+                    app:layout_constraintTop_toBottomOf="@+id/pressureTv" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/currentHourRv"
+                    style="@style/DefRecyclerView.DefHorizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/todayTv"
+                    tools:itemCount="5"
+                    tools:listitem="@layout/item_weather_hour" />
+
+                <TextView
+                    android:id="@+id/forecastTv"
+                    style="@style/DefTxtStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin"
+                    android:text="@string/forecast"
+                    android:textSize="@dimen/text_size_h1"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@+id/currentTempTv"
+                    app:layout_constraintTop_toBottomOf="@+id/currentHourRv" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/forecastRv"
+                    style="@style/DefRecyclerView.DefVertical"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/forecastTv"
+                    tools:itemCount="7"
+                    tools:listitem="@layout/item_weather_day" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <FrameLayout
+            android:id="@+id/loadingFl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparent_dark"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ProgressBar
+                android:layout_width="@dimen/square_large"
+                android:layout_height="@dimen/square_large"
+                android:layout_gravity="center" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/errorLl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="@dimen/padding_large"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/content_desc_empty_state_photo"
+                android:src="@drawable/ic_empty_state" />
+
+            <TextView
+                android:id="@+id/errorTv"
+                style="@style/DefTxtStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin"
+                android:layout_marginBottom="@dimen/margin"
+                android:gravity="center"
+                android:textSize="@dimen/text_size_h2"
+                tools:text="INTERNET QATEEEEEE" />
+
+            <Button
+                android:id="@+id/retryBtn"
+                style="@style/BtnPrimary"
+                android:layout_width="@dimen/btn_width_large"
+                android:layout_height="wrap_content"
+                android:text="@string/try_again" />
+        </LinearLayout>
+</FrameLayout>
