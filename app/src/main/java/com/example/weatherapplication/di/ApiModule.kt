@@ -2,7 +2,7 @@ package com.example.weatherapplication.di
 
 import android.content.Context
 import com.example.weatherapplication.R
-import com.example.weatherapplication.data.source.api.CityApiDatasource
+import com.example.weatherapplication.data.source.api.CityApi
 import com.example.weatherapplication.data.source.api.WeatherApi
 import dagger.Module
 import dagger.Provides
@@ -39,5 +39,5 @@ class ApiModule {
 
     @Provides
     @Singleton
-    fun providesApiCityDatasource(retrofit: Retrofit): CityApiDatasource = retrofit.create(CityApiDatasource::class.java)
+    fun providesApiCityDatasource(retrofit: Retrofit): CityApi = retrofit.create(CityApi::class.java)
 }

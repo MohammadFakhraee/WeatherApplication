@@ -33,5 +33,5 @@ abstract class Database : RoomDatabase() {
 
     abstract fun hourDao(): HourLocalDao
 
-    abstract fun cityDao(): CityLocalDatasource
+    abstract fun cityDao(): CityLocalDao
 }

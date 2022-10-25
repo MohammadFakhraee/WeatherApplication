@@ -30,11 +30,6 @@ class WeatherLocalDatasource @Inject constructor(
     suspend fun cacheData(weatherLocalResponse: WeatherLocalResponse) =
         coroutineScope {
             launch {
-                // Checks if the city's weather data has been saved already; if it was, removes the cached data.
-                // It will also delete its properties saved in db, because we've used foreign key to create their relations.
-//                locationLocalDao.findLocation(weatherLocalResponse.location.name)?.let {
-//                    weatherResponseLocalDao.delete(weatherLocalResponse.apply { id = it.weatherId })
-//                }
                 // Saves new weather response inside db and puts the return value in weatherId
                 val weatherId = weatherResponseLocalDao.save(weatherLocalResponse)
                 launch {

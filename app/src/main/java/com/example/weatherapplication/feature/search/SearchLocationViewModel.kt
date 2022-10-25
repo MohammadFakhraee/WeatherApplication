@@ -7,7 +7,6 @@ import com.example.weatherapplication.R
 import com.example.weatherapplication.feature.search.uimodel.CitySearchUi
 import com.example.weatherapplication.feature.search.uimodel.LocationUi
 import com.example.weatherapplication.feature.search.uimodel.SearchLocationUiState
-import com.example.weatherapplication.usecase.UseCaseResponseWrapper
 import com.example.weatherapplication.usecase.city.GetCities
 import com.example.weatherapplication.usecase.city.GetCity
 import com.example.weatherapplication.util.marker.AppMarker
@@ -19,6 +18,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject
@@ -81,12 +81,9 @@ class SearchLocationViewModel @Inject constructor(private val getCities: GetCiti
             searchField.takeIf { it.isNotEmpty() }?.let {
                 // input text is not empty. calling to loading state
                 _state.value = SearchLocationUiState.LoadingState
-                getCities.run(GetCities.CitySearchRequestValue(searchField)) { response, _ ->
-                    when (response) {
-                        is UseCaseResponseWrapper.Success -> updateUi(response.result.citiesSearchUi)
-                        is UseCaseResponseWrapper.Error -> handleError(response.t)
-                    }
-                }
+                getCities.run(GetCities.CitySearchRequestValue(searchField))
+                    .catch { exception -> handleError(exception) }
+                    .collect { updateUi(it.citiesSearchUi) }
             }
 
 
@@ -170,12 +167,9 @@ class SearchLocationViewModel @Inject constructor(private val getCities: GetCiti
      */
     fun onCitySearchSelected(citySearchUi: CitySearchUi) {
         viewModelScope.launch(Dispatchers.IO) {
-            getCity.run(GetCity.CityRequestValues(citySearchUi.id)) { response, _ ->
-                when (response) {
-                    is UseCaseResponseWrapper.Success -> _state.value = SearchLocationUiState.SelectState(response.result.cityName)
-                    is UseCaseResponseWrapper.Error -> _state.value = SearchLocationUiState.SelectLocationState()
-                }
-            }
+            getCity.run(GetCity.CityRequestValues(citySearchUi.id))
+                .catch { _state.value = SearchLocationUiState.SelectLocationState() }
+                .collect { _state.value = SearchLocationUiState.SelectState(it.cityName) }
         }
     }
 

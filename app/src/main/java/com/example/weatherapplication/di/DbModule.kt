@@ -49,5 +49,5 @@ class DbModule {
 
     @Provides
     @Singleton
-    fun providesCityLocalDao(database: Database): CityLocalDatasource = database.cityDao()
+    fun providesCityLocalDao(database: Database): CityLocalDao = database.cityDao()
 }

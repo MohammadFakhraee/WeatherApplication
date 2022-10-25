@@ -1,6 +1,5 @@
 package com.example.weatherapplication.data.repo
 
-import android.util.Log
 import com.example.weatherapplication.core.pref.ApplicationSharedPrefManager
 import com.example.weatherapplication.data.model.converter.WeatherConverter.convertToLocal
 import com.example.weatherapplication.data.model.local.WeatherLocalResponse
@@ -43,6 +42,5 @@ class WeatherDataRepository @Inject constructor(
             .map { weatherApiResponse -> weatherApiResponse.convertToLocal() }
             .onEach { weatherLocalResponse -> weatherLocalDatasource.cacheData(weatherLocalResponse) }
             .catch { emit(weatherLocalDatasource.fetchData(search)) }
-            .onEach { Log.i("FlowBasedApp", "API - loadWeatherDataFlow: data has been cached in db") }
     }
 }

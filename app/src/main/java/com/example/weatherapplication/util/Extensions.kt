@@ -16,6 +16,8 @@ fun String.toCalendar(pattern: String): Calendar {
     return Calendar.getInstance().also { it.time = sdf.parse(this) }
 }
 
+fun String.sqlContains(): String = "%$this%"
+
 fun Calendar.month(): String = DateFormatSymbols().months[get(Calendar.MONTH)]
 
 fun Calendar.dayOfWeek(): String = stringDayOfWeek(get(Calendar.DAY_OF_WEEK))
