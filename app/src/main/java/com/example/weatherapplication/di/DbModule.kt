@@ -21,31 +21,31 @@ class DbModule {
 
     @Provides
     @Singleton
-    fun providesLocalWeatherResponseDao(database: Database): WeatherResponseLocalDatasource = database.weatherResponseDao()
+    fun providesLocalWeatherResponseDao(database: Database): WeatherResponseLocalDao = database.weatherResponseDao()
 
     @Provides
     @Singleton
-    fun providesLocalLocationDao(database: Database): LocationLocalDatasource = database.locationDao()
+    fun providesLocalLocationDao(database: Database): LocationLocalDao = database.locationDao()
 
     @Provides
     @Singleton
-    fun providesLocalCurrentDao(database: Database): CurrentLocalDatasource = database.currentDao()
+    fun providesLocalCurrentDao(database: Database): CurrentLocalDao = database.currentDao()
 
     @Provides
     @Singleton
-    fun providesLocalForecastDao(database: Database): ForecastLocalDatasource = database.forecastDao()
+    fun providesLocalForecastDao(database: Database): ForecastLocalDao = database.forecastDao()
 
     @Provides
     @Singleton
-    fun providesLocalAstroDao(database: Database): AstroLocalDatasource = database.astroDao()
+    fun providesLocalAstroDao(database: Database): AstroLocalDao = database.astroDao()
 
     @Provides
     @Singleton
-    fun providesLocalDayDao(database: Database): DayLocalDatasource = database.dayDao()
+    fun providesLocalDayDao(database: Database): DayLocalDao = database.dayDao()
 
     @Provides
     @Singleton
-    fun providesLocalHourDao(database: Database): HourLocalDatasource = database.hourDao()
+    fun providesLocalHourDao(database: Database): HourLocalDao = database.hourDao()
 
     @Provides
     @Singleton

@@ -12,13 +12,13 @@ import com.example.weatherapplication.feature.today.uimodel.WeatherTodayUiState
 import com.example.weatherapplication.feature.today.uimodel.WorkerConfig
 import com.example.weatherapplication.feature.today.uimodel.WorkerConfigState
 import com.example.weatherapplication.feature.today.worker.WeatherNotifyWorker
-import com.example.weatherapplication.usecase.UseCaseResponseWrapper
 import com.example.weatherapplication.usecase.weather.GetForecastByCity
 import com.example.weatherapplication.usecase.weather.GetForecastByGeo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.*
@@ -38,7 +38,7 @@ class WeatherTodayViewModel @Inject constructor(
 ) : ViewModel() {
     // Mutable property for holding current user state
     // Private object which is encapsulated from other classes to change the value
-    private val _state: MutableStateFlow<WeatherTodayUiState> = MutableStateFlow(WeatherTodayUiState.LoadingState(false))
+    private val _state: MutableStateFlow<WeatherTodayUiState> = MutableStateFlow(WeatherTodayUiState.LoadingState)
 
     // Back property of _state. StateFlow for classes to listen for state changes
     val state: StateFlow<WeatherTodayUiState> = _state
@@ -55,9 +55,6 @@ class WeatherTodayViewModel @Inject constructor(
 
     // Back property for _routineWorkerState
     val routineWorkerState: StateFlow<WorkerConfigState> = _routineWorkerState
-
-    // Stores whether the data has been loaded properly or not
-    private var isDataLoaded: Boolean = false
 
     // City name will be saved here if user had chosen city to check weather
     private var cityName: String? = null
@@ -137,13 +134,9 @@ class WeatherTodayViewModel @Inject constructor(
         latLng = null
         loading()
         viewModelScope.launch(Dispatchers.IO) {
-            getForecastByCity.run(GetForecastByCity.ByCityReqVal(cityName, 7, aqr = false, alerts = false)) { response, stillLoading ->
-                when (response) {
-                    is UseCaseResponseWrapper.Success<GetForecastByCity.ByCityResponseVal> ->
-                        updateData(response.result.weatherTodayUi, stillLoading)
-                    is UseCaseResponseWrapper.Error -> handleError(response.t, stillLoading)
-                }
-            }
+            getForecastByCity.run(GetForecastByCity.ByCityReqVal(cityName, 7, aqr = false, alerts = false))
+                .catch { exception -> handleError(exception) }
+                .collect { updateData(it.weatherTodayUi) }
         }
     }
 
@@ -157,65 +150,36 @@ class WeatherTodayViewModel @Inject constructor(
         cityName = null
         loading()
         viewModelScope.launch(Dispatchers.IO) {
-            getForecastByGeo.run(
-                GetForecastByGeo.ByGeoReqVal(
-                    latLng.first,
-                    latLng.second,
-                    7,
-                    aqi = false,
-                    alerts = true
-                )
-            ) { response, stillLoading ->
-                when (response) {
-                    is UseCaseResponseWrapper.Success<GetForecastByGeo.ByGeoResponseVal> ->
-                        updateData(response.result.weatherTodayUi, stillLoading)
-                    is UseCaseResponseWrapper.Error -> handleError(response.t, stillLoading)
-                }
-            }
+            getForecastByGeo.run(GetForecastByGeo.ByGeoReqVal(latLng.first, latLng.second, 7, aqi = false, alerts = true))
+                .catch { exception -> handleError(exception) }
+                .collect { updateData(it.weatherTodayUi) }
         }
     }
 
-    // Changes state of fragment to loading state
+    /**
+     * Changes state of fragment to [WeatherTodayUiState.LoadingState] state
+     */
     private fun loading() {
-        _state.value = WeatherTodayUiState.LoadingState(isDataLoaded)
+        _state.value = WeatherTodayUiState.LoadingState
     }
 
     /**
-     * Changes state of fragment to data state. [WeatherTodayUiState.StillLoadingDataState] if [stillLoading] is true
-     * and [WeatherTodayUiState.LoadCompleteDataState] if not.
+     * Changes state of fragment to [WeatherTodayUiState.LoadCompleteDataState] state
      */
-    private fun updateData(weatherTodayUi: WeatherTodayUi, stillLoading: Boolean) {
-        // setting data is loaded
-        isDataLoaded = true
-        _state.value =
-            if (stillLoading) WeatherTodayUiState.StillLoadingDataState(weatherTodayUi)
-            else WeatherTodayUiState.LoadCompleteDataState(weatherTodayUi)
+    private fun updateData(weatherTodayUi: WeatherTodayUi) {
+        _state.value = WeatherTodayUiState.LoadCompleteDataState(weatherTodayUi)
     }
 
     /**
      * Handles error thrown from data sources.
      * @param t error throwable
-     * @param stillLoading whether data is still being loaded in data source layer
      */
-    private fun handleError(t: Throwable, stillLoading: Boolean) {
+    private fun handleError(t: Throwable) {
         t.printStackTrace()
-        // If data is still loading, wait for the final result
-        if (!stillLoading) {
-            // We are sure there aren't any active data loader so we can handle error
-            // Check if data has been loaded before or not
-            if (!isDataLoaded) {
-                // No data was loaded before. So we can update fragment state to show error message
-                _state.value = when (t) {
-                    is IOException -> WeatherTodayUiState.ErrorState(R.string.error_io_exception)
-                    else -> WeatherTodayUiState.ErrorState(R.string.error_server_exception)
-                }
-            } else if (_state.value is WeatherTodayUiState.StillLoadingDataState) {
-                // Fragment is StillLoadingState, data is not loading & and no data was loaded before.
-                // So we should change the state to the LoadCompleteDataState
-                (_state.value as WeatherTodayUiState.StillLoadingDataState).let {
-                    _state.value = WeatherTodayUiState.LoadCompleteDataState(it.weatherTodayUi)
-                }
-            }
+        // we update fragment state to show error message
+        _state.value = when (t) {
+            is IOException -> WeatherTodayUiState.ErrorState(R.string.error_io_exception)
+            else -> WeatherTodayUiState.ErrorState(R.string.error_server_exception)
         }
     }
 
@@ -225,4 +189,3 @@ class WeatherTodayViewModel @Inject constructor(
         private const val WORKER_START_HOUR = 9
     }
 }
-

@@ -3,7 +3,7 @@ package com.example.weatherapplication.di
 import android.content.Context
 import com.example.weatherapplication.R
 import com.example.weatherapplication.data.source.api.CityApiDatasource
-import com.example.weatherapplication.data.source.api.WeatherApiDataSource
+import com.example.weatherapplication.data.source.api.WeatherApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,7 +35,7 @@ class ApiModule {
 
     @Provides
     @Singleton
-    fun provideWeatherApiDataSource(retrofit: Retrofit): WeatherApiDataSource = retrofit.create(WeatherApiDataSource::class.java)
+    fun provideWeatherApiDataSource(retrofit: Retrofit): WeatherApi = retrofit.create(WeatherApi::class.java)
 
     @Provides
     @Singleton

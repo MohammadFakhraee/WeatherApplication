@@ -1,29 +1,27 @@
 package com.example.weatherapplication.data.source.local
 
 import android.content.res.Resources
-import android.util.Log
 import androidx.room.*
 import com.example.weatherapplication.data.model.local.*
 import com.example.weatherapplication.data.source.local.relation.LocalWeatherRelationDetails
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
  * Local weather data source used for caching/fetching data to/from local db.
  */
+@Suppress("OPT_IN_IS_NOT_ENABLED")
 class WeatherLocalDatasource @Inject constructor(
-    private val weatherResponseLocalDatasource: WeatherResponseLocalDatasource,
-    private val locationLocalDatasource: LocationLocalDatasource,
-    private val currentLocalDatasource: CurrentLocalDatasource,
-    private val forecastLocalDatasource: ForecastLocalDatasource,
-    private val astroLocalDatasource: AstroLocalDatasource,
-    private val dayLocalDatasource: DayLocalDatasource,
-    private val hourLocalDatasource: HourLocalDatasource
+    private val weatherResponseLocalDao: WeatherResponseLocalDao,
+    private val locationLocalDao: LocationLocalDao,
+    private val currentLocalDao: CurrentLocalDao,
+    private val forecastLocalDao: ForecastLocalDao,
+    private val astroLocalDao: AstroLocalDao,
+    private val dayLocalDao: DayLocalDao,
+    private val hourLocalDao: HourLocalDao
 ) {
-    companion object {
-        const val TAG = "WeatherLocalDatasource"
-    }
 
     /**
      * Takes converted weather response and saves its data to db. At first stores [WeatherLocalResponse] and takes the returned id,
@@ -32,44 +30,31 @@ class WeatherLocalDatasource @Inject constructor(
     suspend fun cacheData(weatherLocalResponse: WeatherLocalResponse) =
         coroutineScope {
             launch {
-                Log.i(TAG, "cacheData: starting cache process....")
                 // Checks if the city's weather data has been saved already; if it was, removes the cached data.
                 // It will also delete its properties saved in db, because we've used foreign key to create their relations.
-                locationLocalDatasource.findLocation(weatherLocalResponse.location.name)?.let {
-                    Log.i(TAG, "cacheData: removing previous cached data with weatherId: ${it.weatherId}")
-                    weatherResponseLocalDatasource.delete(weatherLocalResponse.apply { id = it.weatherId })
-                }
+//                locationLocalDao.findLocation(weatherLocalResponse.location.name)?.let {
+//                    weatherResponseLocalDao.delete(weatherLocalResponse.apply { id = it.weatherId })
+//                }
                 // Saves new weather response inside db and puts the return value in weatherId
-                val weatherId = weatherResponseLocalDatasource.save(weatherLocalResponse)
-                Log.i(TAG, "cacheData: LocalWeatherResponse saved in db successfully with id: $weatherId")
+                val weatherId = weatherResponseLocalDao.save(weatherLocalResponse)
                 launch {
                     // Saves LocationLocal response in db with corresponding weatherId
-                    val locationId = locationLocalDatasource.save(weatherLocalResponse.location.also { it.weatherId = weatherId })
-                    Log.i(TAG, "cacheData: LocalLocation saved in db successfully with id: $locationId")
+                    locationLocalDao.save(weatherLocalResponse.location.also { it.weatherId = weatherId })
                 }
                 launch {
                     // saves CurrentLocal response with corresponding weatherId
-                    val currentId = currentLocalDatasource.save(weatherLocalResponse.current.also { it.weatherId = weatherId })
-                    Log.i(TAG, "cacheData: LocalCurrent saved in db successfully with id: $currentId")
+                    currentLocalDao.save(weatherLocalResponse.current.also { it.weatherId = weatherId })
                 }
                 weatherLocalResponse.forecastDay.forEach { forecastDay ->
                     // Saves ForecastLocal item with corresponding weatherId and puts return value in forecastId
-                    val forecastId = forecastLocalDatasource.save(forecastDay.also { it.weatherId = weatherId })
-                    Log.i(TAG, "cacheData: LocalForecastDayItem saved in db successfully with id: $forecastId")
+                    val forecastId = forecastLocalDao.save(forecastDay.also { it.weatherId = weatherId })
                     // Saves AstroLocal item with corresponding forecastId
-                    launch {
-                        val astroId = astroLocalDatasource.save(forecastDay.astro.also { it.forecastId = forecastId })
-                        Log.i(TAG, "cacheData: LocalAstro saved in db successfully with id: $astroId")
-                    }
+                    launch { astroLocalDao.save(forecastDay.astro.also { it.forecastId = forecastId }) }
                     // Saves DayLocal item with corresponding forecastId
-                    launch {
-                        val dayId = dayLocalDatasource.save(forecastDay.day.also { it.forecastId = forecastId })
-                        Log.i(TAG, "cacheData: LocalDay saved in db successfully with id: $dayId")
-                    }
+                    launch { dayLocalDao.save(forecastDay.day.also { it.forecastId = forecastId }) }
                     forecastDay.hour.forEach { hourItem ->
                         // Saves HourLocal item of each day with corresponding forecastId
-                        val hourId = launch { hourLocalDatasource.save(hourItem.also { hourItem.forecastId = forecastId }) }
-                        Log.i(TAG, "cacheData: LocalHourItem saved in db successfully with id: $hourId")
+                        launch { hourLocalDao.save(hourItem.also { hourItem.forecastId = forecastId }) }
                     }
                 }
             }
@@ -79,8 +64,8 @@ class WeatherLocalDatasource @Inject constructor(
      * Fetches stored data corresponding to search parameter. It uses relation to query for all data required.
      */
     suspend fun fetchData(search: String): WeatherLocalResponse {
-        locationLocalDatasource.findLocation(search)?.let {
-            val localWeatherRelationDetails = weatherResponseLocalDatasource.findWeather(it.weatherId)
+        locationLocalDao.findLocation(search)?.let {
+            val localWeatherRelationDetails = weatherResponseLocalDao.findWeather(it.weatherId)
             return localWeatherRelationDetails.weatherLocalResponse.copy(
                 current = localWeatherRelationDetails.localCurrent,
                 location = localWeatherRelationDetails.localLocation,
@@ -97,7 +82,7 @@ class WeatherLocalDatasource @Inject constructor(
 }
 
 @Dao
-interface WeatherResponseLocalDatasource {
+interface WeatherResponseLocalDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun save(weatherLocalResponse: WeatherLocalResponse): Long
@@ -111,7 +96,7 @@ interface WeatherResponseLocalDatasource {
 }
 
 @Dao
-interface LocationLocalDatasource {
+interface LocationLocalDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun save(localLocation: LocalLocation): Long
@@ -122,34 +107,34 @@ interface LocationLocalDatasource {
 }
 
 @Dao
-interface CurrentLocalDatasource {
+interface CurrentLocalDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun save(localCurrent: LocalCurrent): Long
 }
 
 @Dao
-interface ForecastLocalDatasource {
+interface ForecastLocalDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun save(localForecastDayItem: LocalForecastDayItem): Long
 }
 
 @Dao
-interface AstroLocalDatasource {
+interface AstroLocalDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun save(localAstro: LocalAstro): Long
 }
 
 @Dao
-interface DayLocalDatasource {
+interface DayLocalDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun save(localDay: LocalDay): Long
 }
 
 @Dao
-interface HourLocalDatasource {
+interface HourLocalDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun save(localHourItem: LocalHourItem): Long

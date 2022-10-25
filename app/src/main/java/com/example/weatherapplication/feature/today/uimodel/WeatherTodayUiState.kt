@@ -9,13 +9,13 @@ import com.example.weatherapplication.feature.today.WeatherTodayViewModel
  * [WeatherTodayViewModel] will trigger one of the below states based on the user interactions.
  */
 sealed interface WeatherTodayUiState {
-    data class StillLoadingDataState(val weatherTodayUi: WeatherTodayUi) : WeatherTodayUiState
+//    data class StillLoadingDataState(val weatherTodayUi: WeatherTodayUi) : WeatherTodayUiState
 
     data class LoadCompleteDataState(val weatherTodayUi: WeatherTodayUi) : WeatherTodayUiState
 
     data class ErrorState(@StringRes val errorTxtId: Int) : WeatherTodayUiState
 
-    data class LoadingState(val dataLoaded: Boolean) : WeatherTodayUiState
+    object LoadingState : WeatherTodayUiState
 
     object EmptyLocationState: WeatherTodayUiState
 }

@@ -10,7 +10,7 @@ import androidx.work.WorkerParameters
 import com.example.weatherapplication.R
 import com.example.weatherapplication.core.MyApp
 import com.example.weatherapplication.core.pref.ApplicationSharedPrefManager
-import com.example.weatherapplication.usecase.UseCaseResponseWrapper
+import com.example.weatherapplication.feature.today.uimodel.WeatherTodayUi
 import com.example.weatherapplication.usecase.weather.GetForecastByCity
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -36,40 +36,21 @@ class WeatherNotifyWorker @AssistedInject constructor(
                     // Already have chosen a city
                     // Getting weather info for the city
                     getForecastByCity.run(
-                        GetForecastByCity.ByCityReqVal(
-                            cityName = cityName,
-                            days = 7,
-                            aqr = false,
-                            alerts = false
-                        )
-                    ) { response, stillLoading ->
-                        Log.i("WorkerManagingFlow", "doWork: Received response. Data is still loading: $stillLoading")
-                        onWeatherResponse(response, stillLoading)
-                    }
+                        GetForecastByCity.ByCityReqVal(cityName, 7, aqr = false, alerts = false)
+                    ).collect { response -> onWeatherResponse(response.weatherTodayUi) }
                 }
             }
-            // Waiting for coroutine to finish
-//            job.join()
             // Then finishing worker with success
             Result.success()
         }
 
-    private fun onWeatherResponse(response: UseCaseResponseWrapper<GetForecastByCity.ByCityResponseVal>, stillLoading: Boolean) {
-        response
-            .takeIf {
-                // Checking if there is still data coming from data sources or not.
-                // If there isn't any and response is successful, we can notify user.
-                !stillLoading && it is UseCaseResponseWrapper.Success
-            }?.let { (it as UseCaseResponseWrapper.Success).result.weatherTodayUi }
-            ?.also { weatherTodayUi ->
-                val cityName = weatherTodayUi.currentWeatherUi.locationName
-                val temp = weatherTodayUi.currentWeatherUi.tempC
-                val notificationTitle = applicationContext.getString(R.string.notification_title, cityName, temp)
-                val notificationDesc = weatherTodayUi.currentWeatherUi.conditionText
-
-                // Triggering notification
-                triggerNotification(notificationTitle, notificationDesc)
-            }
+    private fun onWeatherResponse(weatherTodayUi: WeatherTodayUi) {
+        val cityName = weatherTodayUi.currentWeatherUi.locationName
+        val temp = weatherTodayUi.currentWeatherUi.tempC
+        val notificationTitle = applicationContext.getString(R.string.notification_title, cityName, temp)
+        val notificationDesc = weatherTodayUi.currentWeatherUi.conditionText
+        // Triggering notification
+        triggerNotification(notificationTitle, notificationDesc)
     }
 
     private fun triggerNotification(notificationTitle: String, notificationDesc: String) {

@@ -81,9 +81,8 @@ class WeatherTodayFragment : BaseFragment<FragmentWeatherTodayBinding>() {
                 launch {
                     weatherTodayViewModel.state.collect {
                         when (it) {
-                            is WeatherTodayUiState.StillLoadingDataState -> onDataStillLoading(it.weatherTodayUi)
                             is WeatherTodayUiState.LoadCompleteDataState -> onDataCompleteLoading(it.weatherTodayUi)
-                            is WeatherTodayUiState.LoadingState -> onLoading(it.dataLoaded)
+                            is WeatherTodayUiState.LoadingState -> onLoading()
                             is WeatherTodayUiState.ErrorState -> onError(it.errorTxtId)
                             is WeatherTodayUiState.EmptyLocationState -> onEmptySharedPref()
                         }
@@ -136,9 +135,9 @@ class WeatherTodayFragment : BaseFragment<FragmentWeatherTodayBinding>() {
             }
     }
 
-    private fun onLoading(dataLoaded: Boolean) {
+    private fun onLoading() {
         binding.run {
-            if (!dataLoaded) dataCl.visibility = GONE
+            dataCl.visibility = GONE
             loadingFl.visibility = VISIBLE
             errorLl.visibility = GONE
         }
@@ -157,15 +156,6 @@ class WeatherTodayFragment : BaseFragment<FragmentWeatherTodayBinding>() {
     // No initial city name found. Navigating user to search fragment
     private fun onEmptySharedPref() {
         findNavController().navigate(R.id.action_weatherTodayFragment_to_searchLocationFragment)
-    }
-
-    private fun onDataStillLoading(weatherTodayUi: WeatherTodayUi) {
-        binding.run {
-            dataCl.visibility = VISIBLE
-            loadingFl.visibility = VISIBLE
-            errorLl.visibility = GONE
-        }
-        updateUI(weatherTodayUi)
     }
 
     private fun onDataCompleteLoading(weatherTodayUi: WeatherTodayUi) {

@@ -4,12 +4,12 @@ import com.example.weatherapplication.R
 import com.example.weatherapplication.core.pref.ApplicationSharedPrefManager
 import com.example.weatherapplication.feature.widget.uistate.WeatherCurrentUi
 import com.example.weatherapplication.feature.widget.uistate.WeatherCurrentUiState
-import com.example.weatherapplication.usecase.UseCaseResponseWrapper
 import com.example.weatherapplication.usecase.weather.GetCurrentByCity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject
@@ -27,13 +27,9 @@ class WidgetCurrentViewModel @Inject constructor(
         CoroutineScope(Dispatchers.IO).launch {
             applicationSharedPrefManager.lastLocationLoadedName.takeIf { it.isNotEmpty() }
                 ?.let { cityName ->
-                    getCurrentByCity.run(GetCurrentByCity.ByCityReqVal(cityName)) { response, stillLoading ->
-                        if (!stillLoading)
-                            when (response) {
-                                is UseCaseResponseWrapper.Success -> updateUi(response.result.weatherCurrentUi)
-                                is UseCaseResponseWrapper.Error -> handleError(response.t)
-                            }
-                    }
+                    getCurrentByCity.run(GetCurrentByCity.ByCityReqVal(cityName))
+                        .catch { exception -> handleError(exception) }
+                        .collect { response -> updateUi(response.weatherCurrentUi) }
                 }
         }
     }

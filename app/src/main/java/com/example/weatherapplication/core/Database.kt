@@ -19,19 +19,19 @@ import com.example.weatherapplication.data.source.local.*
 )
 abstract class Database : RoomDatabase() {
 
-    abstract fun weatherResponseDao(): WeatherResponseLocalDatasource
+    abstract fun weatherResponseDao(): WeatherResponseLocalDao
 
-    abstract fun locationDao(): LocationLocalDatasource
+    abstract fun locationDao(): LocationLocalDao
 
-    abstract fun currentDao(): CurrentLocalDatasource
+    abstract fun currentDao(): CurrentLocalDao
 
-    abstract fun forecastDao(): ForecastLocalDatasource
+    abstract fun forecastDao(): ForecastLocalDao
 
-    abstract fun astroDao(): AstroLocalDatasource
+    abstract fun astroDao(): AstroLocalDao
 
-    abstract fun dayDao(): DayLocalDatasource
+    abstract fun dayDao(): DayLocalDao
 
-    abstract fun hourDao(): HourLocalDatasource
+    abstract fun hourDao(): HourLocalDao
 
     abstract fun cityDao(): CityLocalDatasource
 }

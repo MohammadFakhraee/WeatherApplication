@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Weather Application</string>
-    <string name="weather_api_key">9942e10d9a3f464c93052323220910</string>
+    <string name="weather_api_key">2def47ea19ba4073a2991934222510</string>
     <string name="error_io_exception">Please make sure your internet connection is stable</string>
     <string name="error_server_exception">Could not get data from server</string>
     <string name="degree_sign">%1$d\u00B0</string>

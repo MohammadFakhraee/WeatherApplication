@@ -17,10 +17,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject
@@ -90,13 +88,8 @@ class SearchLocationViewModel @Inject constructor(private val getCities: GetCiti
                     }
                 }
             }
-        }
-    }
 
-    fun <T, K> Flow<T>.map(transform: suspend (value: T) -> K): Flow<K> = flow {
-        collect {
-            val result = transform(it)
-            emit(result)
+
         }
     }
 
