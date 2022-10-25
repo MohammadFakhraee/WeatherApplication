@@ -7,7 +7,7 @@ import com.example.weatherapplication.feature.today.uimodel.CurrentWeatherUi
 import com.example.weatherapplication.feature.today.uimodel.ForecastDayUi
 import com.example.weatherapplication.feature.today.uimodel.HourUi
 import com.example.weatherapplication.feature.today.uimodel.WeatherTodayUi
-import com.example.weatherapplication.feature.widget.uistate.WeatherCurrentUi
+import com.example.weatherapplication.feature.widget.uistate.WidgetWeatherCurrentUi
 import com.example.weatherapplication.util.toCalendar
 
 /**
@@ -127,11 +127,11 @@ object WeatherConverter {
     }
 
     /**
-     * Converts local response of weather forecasting to [WeatherCurrentUi] model which will be used in places
+     * Converts local response of weather forecasting to [WidgetWeatherCurrentUi] model which will be used in places
      * that does not need full information.
      */
-    fun WeatherLocalResponse.convertToCurrentWeatherUi(): WeatherCurrentUi {
-        return WeatherCurrentUi(
+    fun WeatherLocalResponse.convertToCurrentWeatherUi(): WidgetWeatherCurrentUi {
+        return WidgetWeatherCurrentUi(
             id = id,
             cityName = location.name,
             currentTempC = current.tempC,

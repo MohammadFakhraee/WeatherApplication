@@ -2,8 +2,8 @@ package com.example.weatherapplication.feature.widget
 
 import com.example.weatherapplication.R
 import com.example.weatherapplication.core.pref.ApplicationSharedPrefManager
-import com.example.weatherapplication.feature.widget.uistate.WeatherCurrentUi
-import com.example.weatherapplication.feature.widget.uistate.WeatherCurrentUiState
+import com.example.weatherapplication.feature.widget.uistate.WidgetWeatherCurrentUi
+import com.example.weatherapplication.feature.widget.uistate.WidgetWeatherCurrentUiState
 import com.example.weatherapplication.usecase.weather.GetCurrentByCity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,9 +18,9 @@ class WidgetCurrentViewModel @Inject constructor(
     private val getCurrentByCity: GetCurrentByCity,
     private val applicationSharedPrefManager: ApplicationSharedPrefManager
 ) {
-    private val _state: MutableStateFlow<WeatherCurrentUiState> = MutableStateFlow(WeatherCurrentUiState.DataState())
+    private val _state: MutableStateFlow<WidgetWeatherCurrentUiState> = MutableStateFlow(WidgetWeatherCurrentUiState.DataStateWidget())
 
-    val state: StateFlow<WeatherCurrentUiState> = _state
+    val state: StateFlow<WidgetWeatherCurrentUiState> = _state
 
     // Loading current weather information from city name stored in shared preferences
     fun loadCurrentData() {
@@ -29,19 +29,19 @@ class WidgetCurrentViewModel @Inject constructor(
                 ?.let { cityName ->
                     getCurrentByCity.run(GetCurrentByCity.ByCityReqVal(cityName))
                         .catch { exception -> handleError(exception) }
-                        .collect { response -> updateUi(response.weatherCurrentUi) }
+                        .collect { response -> updateUi(response.widgetWeatherCurrentUi) }
                 }
         }
     }
 
-    private fun updateUi(weatherCurrentUi: WeatherCurrentUi) {
-        _state.value = WeatherCurrentUiState.DataState(weatherCurrentUi)
+    private fun updateUi(widgetWeatherCurrentUi: WidgetWeatherCurrentUi) {
+        _state.value = WidgetWeatherCurrentUiState.DataStateWidget(widgetWeatherCurrentUi)
     }
 
     private fun handleError(t: Throwable) {
         _state.value = when (t) {
-            is IOException -> WeatherCurrentUiState.ErrorState(R.string.error_io_exception)
-            else -> WeatherCurrentUiState.ErrorState(R.string.error_server_exception)
+            is IOException -> WidgetWeatherCurrentUiState.ErrorStateWidget(R.string.error_io_exception)
+            else -> WidgetWeatherCurrentUiState.ErrorStateWidget(R.string.error_server_exception)
         }
     }
 }

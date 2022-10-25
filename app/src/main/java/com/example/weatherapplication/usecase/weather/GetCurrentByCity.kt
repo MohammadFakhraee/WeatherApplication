@@ -2,7 +2,7 @@ package com.example.weatherapplication.usecase.weather
 
 import com.example.weatherapplication.data.model.converter.WeatherConverter.convertToCurrentWeatherUi
 import com.example.weatherapplication.data.repo.WeatherDataRepository
-import com.example.weatherapplication.feature.widget.uistate.WeatherCurrentUi
+import com.example.weatherapplication.feature.widget.uistate.WidgetWeatherCurrentUi
 import com.example.weatherapplication.usecase.UseCaseFlow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -18,5 +18,5 @@ class GetCurrentByCity @Inject constructor(private val weatherDataRepository: We
 
     data class ByCityReqVal(val cityName: String) : UseCaseFlow.RequestValues
 
-    data class ByCityResVal(val weatherCurrentUi: WeatherCurrentUi) : UseCaseFlow.ResponseValue
+    data class ByCityResVal(val widgetWeatherCurrentUi: WidgetWeatherCurrentUi) : UseCaseFlow.ResponseValue
 }
